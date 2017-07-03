@@ -16,21 +16,23 @@ from scipy import ndimage
 from skimage.filters import threshold_adaptive
 from scipy.misc import imresize
 from sklearn.datasets import fetch_mldata
+from sklearn.neighbors import NearestNeighbors
 
-izrazi = np.zeros([10045, 784], 'uint8')
+cifre = np.zeros([5050, 784], 'uint8')
 
 mnist = fetch_mldata('MNIST original')
-data   = mnist.data / 255.0
+data   = mnist.data
 labels = mnist.target.astype('int')
-train_rank = 10000
+train_rank = 5000
 train_subset = np.random.choice(data.shape[0], train_rank)
 train_data = data[train_subset]
 train_labels = labels[train_subset]
 
-#for i in range(1, 10001):
-#    slika = train_data[i].reshape(784)
-#    izrazi[i] = slika
-#    plt.imshow(train_data[i], 'gray')
+for i in range(1, 5001):
+    slika = train_data[i-1]
+    slika = slika.reshape(784)
+    cifre[(i-1)] = slika
+    
 
 for i in range (1,11):
     plus = imread("slike/"+"plus"+str(i)+".png")
@@ -42,10 +44,9 @@ for i in range (1,11):
     for region in regions:
         bbox = region.bbox          
         img_crop =  grayPlus[bbox[0]:bbox[2],bbox[1]:bbox[3]]
-        #imgResize = imresize(img_crop, [28,28])
-        #imgReshape = imgResize.reshape(784)
-        #izrazi[9990+x-1]=z
-        plt.imshow(img_crop, 'gray')
+        imgResize = imresize(img_crop, [28,28])
+        imgReshape = imgResize.reshape(784)
+        cifre[5000+i-1] = imgReshape
         
 for i in range (1,11):
     minus = imread("slike/"+"minus"+str(i)+".png")
@@ -58,9 +59,8 @@ for i in range (1,11):
         bbox = region.bbox          
         img_crop =  grayMinus[bbox[0]:bbox[2],bbox[1]:bbox[3]]
         imgResize = imresize(img_crop, [28,28])
-        #imgReshape = imgResize.reshape(784)
-        #izrazi[9990+x-1]=z
-        plt.imshow(img_crop, 'gray')
+        imgReshape = imgResize.reshape(784)
+        cifre[5010+i-1] = imgReshape
         
 for i in range (1,11):
     puta = imread("slike/"+"puta"+str(i)+".png")
@@ -73,9 +73,8 @@ for i in range (1,11):
         bbox = region.bbox          
         img_crop =  grayPuta[bbox[0]:bbox[2],bbox[1]:bbox[3]]
         imgResize = imresize(img_crop, [28,28])
-        #imgReshape = imgResize.reshape(784)
-        #izrazi[9990+x-1]=z
-        plt.imshow(img_crop, 'gray')
+        imgReshape = imgResize.reshape(784)
+        cifre[5020+i-1] = imgReshape
         
 for i in range (1,11):
     deljenje = imread("slike/"+"deljenje"+str(i)+".png")
@@ -88,9 +87,8 @@ for i in range (1,11):
         bbox = region.bbox          
         img_crop =  grayDeljenje[bbox[0]:bbox[2],bbox[1]:bbox[3]]
         imgResize = imresize(img_crop, [28,28])
-        #imgReshape = imgResize.reshape(784)
-        #izrazi[9990+x-1]=z
-        plt.imshow(img_crop, 'gray')
+        imgReshape = imgResize.reshape(784)
+        cifre[5030+i-1] = imgReshape
         
 for i in range (1,11):
     koren = imread("slike/"+"koren"+str(i)+".png")
@@ -103,24 +101,11 @@ for i in range (1,11):
         bbox = region.bbox          
         img_crop =  grayKoren[bbox[0]:bbox[2],bbox[1]:bbox[3]]
         imgResize = imresize(img_crop, [28,28])
-        #imgReshape = imgResize.reshape(784)
-        #izrazi[9990+x-1]=z
-        plt.imshow(img_crop, 'gray')
+        imgReshape = imgResize.reshape(784)
+        cifre[5040+i-1] = imgReshape
 
-#img = imread('slika1.png')
-#gray = rgb2gray(img)*255
-#img_gr = gray > 0.5
-#img_gray_tr = 1-threshold_adaptive(img_gr, block_size=75, offset=0.04)
-#plt.imshow(img_gray_tr, 'gray')
-#
-#labeled = label(img_gray_tr)
-#regions = regionprops(labeled)
-#
-#print('Broj regiona: {}'.format(len(regions)))
-#plt.imshow(labeled ,'gray')
-#
-#objects = ndimage.find_objects(labeled)
-##for i in objects:
-#loc = objects[5]
-#plt.imshow(img_gray_tr[loc], 'gray')
-#print(loc[0].start, loc[0].stop)
+
+KNN = NearestNeighbors(1, 'auto').fit(cifre)
+
+print("zavrsio")
+
