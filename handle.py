@@ -30,8 +30,8 @@ def visual(self, name):
         txt.grid(row=4, column=0)
         lhd, rhs = name.split("\\", 1)
         from PhotoMath import proces
-        #ttt = proces(self,rhs)
-        ttt = 45
+        ttt = proces(self,rhs)
+        #ttt = 45
         tx = ttk.Label(window, text=ttt,background="white", font=('Helvetica', '20'))
         tx.grid(row=4, column=1)
         
