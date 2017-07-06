@@ -4,7 +4,6 @@ Created on Mon May 15 12:13:23 2017
 
 @author: Jelena
 """
-import matplotlib.pyplot as plt
 import numpy as np
 np.set_printoptions(threshold='nan')
 import math
@@ -184,15 +183,15 @@ def proces(self,rhs):
     izrazSlika = imread(rhs)
     #izrazSlika = imread("problem.png")
     toGray = rgb2gray(izrazSlika)*255
-    negate=1-(toGray>30)   
+    negate=1-(toGray>30)  
     negate=dilation(negate)
-    #plt.imshow(negate,'gray')
+    
     labeled=label(negate)
     regions=regionprops(labeled)
     cast=toGray.astype('uint8')
     
     
-    list = {}
+    lista = {}
     regions.sort
     for region in regions:
         bbox=region.bbox  
@@ -200,26 +199,21 @@ def proces(self,rhs):
         test=imresize(img_crop,[28,28])
         test=test.reshape(1,784)
         rez=KNN.kneighbors(test, 5)
-        list[bbox]=rez[1][0][0]
+        lista[bbox]=rez[1][0][0]
         
-    def sortByKey():
-        result=sorted(list.items(), key = lambda t : t[0][1])
-        return result
-    
-    
-    result=sortByKey()
+        
+    result=sortByKey(lista)
     resultList=np.asarray(result)
     odnos=0
     end=0
     izraz=""
     
-    #collections.OrderedDict(sorted(streetno.items()))
-    for x, broj in resultList:
+    for coor, broj in resultList:
         if(odnos==0):
-            odnos=x[2]-x[0]
-        if((x[2]-x[0])-odnos<0 and broj<5090):
+            odnos=coor[2]-coor[0]
+        if((coor[2]-coor[0])-odnos<0 and broj<5090):
             izraz+="**"
-        if(end!=0 and end<x[1]):
+        if(end!=0 and end<coor[1]):
             izraz+=')'
             end=0
         if broj < br0+10:
@@ -246,8 +240,8 @@ def proces(self,rhs):
             izraz+='/'
         elif broj < 5120:
             izraz+='math.sqrt('
-            end=x[3]
-            if(odnos==x[2]-x[0]):
+            end=coor[3]
+            if(odnos==coor[2]-coor[0]):
                 odnos=0
         elif broj < 5130:
             izraz+='-'
@@ -259,10 +253,9 @@ def proces(self,rhs):
     
     if(end!=0):
         izraz+=')'        
-    #print izraz
-    #
-    #print eval(izraz)
-    
-    return eval(izraz)
+    rezultat = round(eval(izraz), 2)
+    return rezultat
 
-    
+def sortByKey(lista):
+        result=sorted(lista.items(), key = lambda t : t[0][1])
+        return result   
